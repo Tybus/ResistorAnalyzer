@@ -1,6 +1,13 @@
 <resources>
-    <string name="app_name">ResistorAnalyzer</string>
     <string name="dialog_howto">Here you can select to take a new Picture of a Resistor ot choose a picture from your gallery</string>
     <string name="got_it">Got it!</string>
-    <string name ="camera_capture">Capture</string>
+    <string name="camera_capture">Capture</string>
+    <string name="title_activity_scan">ScanActivity</string>
+    <string name="app_name">Resistor Scanner</string>
+
+    <string name="dialog_message">Position the red line over the colour bands of the resistor,
+        keeping the tolerance band to the right</string>
+    <string name="dialog_title">How to scan resistors</string>
+    <string name="dialog_ok">OK</string>
+    <string name="action_settings">Settings</string>
 </resources>
