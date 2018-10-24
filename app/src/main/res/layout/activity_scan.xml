@@ -17,7 +17,7 @@
         android:id="@+id/ResistorCameraView"
         opencv:show_fps="false"
         opencv:camera_id="any"
-        tools:context=".ScanActivity"/>
+        tools:context=".MainActivity"/>
 
     <SeekBar
         android:id="@+id/CameraZoomControls"
