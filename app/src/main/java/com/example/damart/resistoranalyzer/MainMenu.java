@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import ca.parth.resistordecoder.MainActivity;
+
 public class MainMenu extends AppCompatActivity {
     private static final int PICK_IMAGE = 100;
     final DisplayHowToDialogFragment HowToDialog = new DisplayHowToDialogFragment();
@@ -21,7 +23,7 @@ public class MainMenu extends AppCompatActivity {
        HowToDialog.show(getSupportFragmentManager(), "How to use");
     }
     public void startCapture(View view){
-        Intent intent = new Intent(this, CaptureMode.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
     public void browseImage(View view){
