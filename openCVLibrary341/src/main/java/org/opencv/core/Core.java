@@ -2315,7 +2315,13 @@ public class Core {
         return;
     }
 
-// manual port
+    public static void putText(Mat imageMat, String valueStr, Point point, int fontHersheyComplex, int i, Scalar scalar, int i1) {
+    }
+
+    public static void line(Mat imageMat, Point point, Point point1, Scalar color, int i) {
+    }
+
+    // manual port
 public static class MinMaxLocResult {
     public double minVal;
     public double maxVal;
