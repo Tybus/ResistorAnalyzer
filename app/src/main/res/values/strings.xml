@@ -3,4 +3,8 @@
     <string name="dialog_howto">Here you can select to take a new Picture of a Resistor ot choose a picture from your gallery</string>
     <string name="got_it">Got it!</string>
     <string name="camera_capture">Capture</string>
+    <string name="dialog_message">Coloque la linea roja sobre las bandas de colores de la resistencia procura que
+    la banda de tolerancia quede a la derecha</string>
+    <string name="dialog_title">Como escanear resistencias</string>
+    <string name="dialog_ok">OK</string>
 </resources>

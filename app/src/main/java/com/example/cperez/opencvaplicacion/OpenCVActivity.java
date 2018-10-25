@@ -1,45 +1,44 @@
 package com.example.cperez.opencvaplicacion;
 
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Mat;
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
-
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.SurfaceView;
-import android.view.WindowManager;
+import android.widget.SeekBar;
 
-public class OpenCVActivity extends AppCompatActivity implements CvCameraViewListener2 {
-    private static final String TAG = "OCVSample::Activity";
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
 
-    private CameraBridgeViewBase mOpenCvCameraView;
-    private boolean              mIsJavaCamera = true;
-    private MenuItem             mItemSwitchCamera = null;
+import static android.content.ContentValues.TAG;
 
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+public class OpenCVActivity extends Activity implements CvCameraViewListener2 {
+
+    private ResistorCameraView _resistorCameraView;
+    private ResistorImageProcessor _resistorProcessor;
+
+        private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS:
-                {
-                    Log.i(TAG, "OpenCV loaded successfully");
-                    mOpenCvCameraView.enableView();
-                } break;
+                    _resistorCameraView.enableView();
+                    break;
                 default:
-                {
                     super.onManagerConnected(status);
-                } break;
+                    break;
             }
         }
     };
@@ -48,38 +47,70 @@ public class OpenCVActivity extends AppCompatActivity implements CvCameraViewLis
         Log.i(TAG, "Instantiated new " + this.getClass());
     }
     final int PERMISOS_CAMARA = 1;
-    /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "called onCreate");
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.CAMERA},
-                        PERMISOS_CAMARA);
+                    new String[]{Manifest.permission.CAMERA},
+                    PERMISOS_CAMARA);
             finish();
 
         }
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         setContentView(R.layout.activity_open_cv);
+        _resistorCameraView = (ResistorCameraView) findViewById(R.id.ResistorCameraView);
+        _resistorCameraView.setVisibility(SurfaceView.VISIBLE);
+        _resistorCameraView.setZoomControl((SeekBar) findViewById(R.id.CameraZoomControls));
+        _resistorCameraView.setCvCameraViewListener(this);
 
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.tutorial1_activity_java_surface_view);
+        _resistorProcessor = new ResistorImageProcessor();
 
-        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-
-        mOpenCvCameraView.setCvCameraViewListener(this);
+        SharedPreferences settings = getPreferences(0);
+        if(!settings.getBoolean("shownInstructions", false))
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.dialog_message)
+                    .setTitle(R.string.dialog_title)
+                    .setNeutralButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create().show();
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean("shownInstructions", true);
+            editor.apply();
+        }
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
+        if (_resistorCameraView != null)
+            _resistorCameraView.disableView();
     }
+
+    public void onDestroy() {
+        super.onDestroy();
+        if (_resistorCameraView != null)
+            _resistorCameraView.disableView();
+    }
+
+    public void onCameraViewStarted(int width, int height) {
+    }
+
+    public void onCameraViewStopped() {
+    }
+
+    public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
+        return _resistorProcessor.processFrame(inputFrame);
+    }
+
     @Override
     public void onResume()
     {
@@ -91,21 +122,5 @@ public class OpenCVActivity extends AppCompatActivity implements CvCameraViewLis
             Log.d(TAG, "OpenCV library found inside package. Using it!");
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
-    }
-
-    public void onDestroy() {
-        super.onDestroy();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
-    }
-
-    public void onCameraViewStarted(int width, int height) {
-    }
-
-    public void onCameraViewStopped() {
-    }
-
-    public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-        return inputFrame.rgba();
     }
 }
