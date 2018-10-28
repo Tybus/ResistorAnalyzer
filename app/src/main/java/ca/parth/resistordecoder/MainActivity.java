@@ -1,12 +1,18 @@
 package ca.parth.resistordecoder;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.SurfaceView;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -43,6 +49,10 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 0);
+        }
         _resistorCameraView = (ResistorCameraView) findViewById(R.id.ResistorCameraView);
         _resistorCameraView.setVisibility(SurfaceView.VISIBLE);
         _resistorCameraView.setZoomControl((SeekBar) findViewById(R.id.CameraZoomControls));
@@ -99,4 +109,16 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
         super.onResume();
         _loaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permission, @NonNull int[] grantResults) {
+        if(requestCode == 200){
+            if(grantResults[0] == PackageManager.PERMISSION_DENIED){
+                //Close the app
+                Toast.makeText(MainActivity.this, "Sorry!!!, you can't use this app without granting permission", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        }
+    }
+
 }
