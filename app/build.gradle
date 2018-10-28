@@ -1,14 +1,31 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'Blah'
+            keyPassword 'xxx'
+            storeFile file('/home/somelocation/keys.jks')
+            storePassword 'xxx'
+        }
+    }
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi', 'armeabi-v7a'
+            universalApk false
+        }
+    }
     compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
-        applicationId "com.example.cperez.opencvaplicacion"
+        applicationId "ca.parth.resistordecoder"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode 2
+        versionName "1.1"
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
@@ -16,14 +33,25 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation project(':openCVLibrary341')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:28.0.0'
+    compile project(':openCVLibrary2410')
+}
+
+ext.versionCodes = [armeabi: 1, 'armeabi-v7a': 3]
+
+import com.android.build.OutputFile
+
+android.applicationVariants.all { variant ->
+    // assign different version code for each output
+    variant.outputs.each { output ->
+        int abiVersionCode = project.ext.versionCodes.get(output.getFilter(OutputFile.ABI)) ?: 0
+        output.versionCodeOverride = (abiVersionCode * 1000) + android.defaultConfig.versionCode
+    }
 }
