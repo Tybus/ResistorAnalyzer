@@ -88,10 +88,10 @@ public class ResistorCameraView extends JavaCameraView {
         }
 
         List<String> FlashModes = params.getSupportedFlashModes();
-        if(FlashModes != null && FlashModes.contains(Camera.Parameters.FLASH_MODE_TORCH))
+        if(FlashModes != null && FlashModes.contains(Camera.Parameters.WHITE_BALANCE_FLUORESCENT))
         {
-            params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-        }
+            params.setFlashMode(Camera.Parameters.WHITE_BALANCE_FLUORESCENT);
+            }
 
         if(params.isZoomSupported())
             enableZoomControls(params);

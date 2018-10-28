@@ -78,7 +78,7 @@ public class ResistorImageProcessor {
                 valueStr = String.valueOf(value) + " Ohm";
 
             if(value <= 1e9)
-                Core.putText(imageMat, valueStr, new Point(10, 100), Core.FONT_HERSHEY_COMPLEX,
+                Core.putText(imageMat, valueStr, new Point(10, 100), Core.FONT_ITALIC,
                              2, new Scalar(255, 0, 0, 255), 3);
         }
 
