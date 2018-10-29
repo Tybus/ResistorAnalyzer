@@ -19,7 +19,6 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
 public class ResistorImageProcessor {
-
     private static final int NUM_CODES = 10;
 
     // HSV colour bounds
